@@ -1,3 +1,6 @@
+require 'thread'
+require 'socket'
+
 module Circus
   class Connection
     
@@ -8,6 +11,15 @@ module Circus
     
     def connect
       @socket = TCPSocket.open(@config[:server], @config[:port])
+      
+      @send_thread = Thread.new { dispatch }
+      
+      while line = @socket.gets
+        parse line
+      end
+      
+      @send_thread.exit
+      @queue.clear
     end
     
     def send(message)
@@ -15,6 +27,22 @@ module Circus
     end
     
     protected
+    
+    def dispatch
+      loop do
+        message = @queue.pop
+        puts "writing: #{message}"
+        @socket.write "#{message.chomp}\r\n"
+        sleep @config[:send_speed]
+      end
+    end
+    
+    def parse(line)
+      puts line
+      if line =~ /^PING\s+:(.*)$/
+        @queue << "PONG :#{$1}"
+      end
+    end
     
   end
 end
