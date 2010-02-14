@@ -14,8 +14,8 @@ module Circus
       
       @send_thread = Thread.new { dispatch }
       
-      while line = @socket.gets
-        parse line
+      while line = @socket.gets(@config[:eol])
+        parse line.chomp
       end
       
       @send_thread.exit
@@ -32,7 +32,7 @@ module Circus
       loop do
         message = @queue.pop
         puts "writing: #{message}"
-        @socket.write "#{message.chomp}#{eol}"
+        @socket.write "#{message}#{@config[:eol]}"
         sleep @config[:send_speed]
       end
     end

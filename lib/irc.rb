@@ -1,4 +1,13 @@
-require 'lib/irc/connection'
+$:.unshift(File.dirname(__FILE__)) unless $:.include?(File.dirname(__FILE__)) ||
+  $:.include?(File.expand_path(File.dirname(__FILE__)))
+
+require 'rubygems'
+require 'active_support'
+require 'irc/connection'
+
+Dir[File.dirname(__FILE__) + "/irc/messages/*.rb"].each do |klass|
+  require klass
+end
 
 module Circus
   class IRC
@@ -26,53 +35,13 @@ module Circus
     end
     
     def message(type, *arguments)
-      self.send type.to_s.downcase.to_sym, arguments
+      message_class = type.to_s.downcase.classify
+      message_class = "Circus::Messages::#{message_class}"
+      message_class = message_class.constantize
+      @connection.send message_class.new *arguments
     end
     
     protected
-    
-    def privmsg(arguments)
-      @connection.send "PRIVMSG #{arguments[0]} :#{arguments[1]}"
-    end
-    
-    def action(arguments)
-      @connection.send "PRIVMSG #{arguments[0]} :\001ACTION #{arguments[1]}\001"
-    end
-    
-    def join(arguments)
-      arguments.each do |channel|
-        @connection.send "JOIN #{channel}"
-      end
-    end
-    
-    def part(arguments)
-      arguments.each do |channel|
-        @connection.send "PART #{channel}"
-      end
-    end
-    
-    def nick(arguments)
-      @connection.send "NICK #{arguments[0]}"
-    end
-    
-    def user(arguments)
-      @connection.send "USER #{arguments[0]}"
-    end
-    
-    def pass(arguments)
-      @connection.send "PASS #{arguments[0]}"
-    end
-    
-    def topic(arguments)
-      @connection.send "TOPIC #{arguments[0]} :#{arguments[1]}"
-    end
-    
-    def kick(arguments)
-      while arguments.size < 3
-        arguments << ""
-      end
-      @connection.send "KICK #{arguments[0]} #{arguments[1]} :#{arguments[2]}"
-    end
     
   end
 end
