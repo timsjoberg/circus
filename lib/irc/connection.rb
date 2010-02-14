@@ -32,7 +32,7 @@ module Circus
       loop do
         message = @queue.pop
         puts "writing: #{message}"
-        @socket.write "#{message.chomp}\r\n"
+        @socket.write "#{message.chomp}#{eol}"
         sleep @config[:send_speed]
       end
     end

@@ -9,7 +9,8 @@ module Circus
                     :nick       =>  "Circus-IRC",
                     :username   =>  "circus",
                     :realname   =>  "Using ruby with Circus IRC",
-                    :send_speed =>  0.5 }
+                    :send_speed =>  0.5,
+                    :eol        =>  "\r\n" }
       
       @config = @default.merge options
     end
