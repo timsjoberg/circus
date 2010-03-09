@@ -7,7 +7,11 @@ module Circus
       end
       
       def to_s
-        "JOIN #{@channel}"
+        if @channel =~ /^\#/
+          "JOIN #{@channel}"
+        else
+          "JOIN ##{@channel}"
+        end
       end
       
     end
