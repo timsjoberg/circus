@@ -1,6 +1,9 @@
 require 'thread'
 require 'socket'
+require 'timeout'
+
 require 'irc/parser'
+require 'irc/errors'
 
 module Circus
   class Connection
@@ -17,17 +20,25 @@ module Circus
       @send_thread = Thread.new { dispatch }
       
       begin
-        while line = @socket.gets(@config[:eol])
+        loop do
+          line = nil
+          Timeout::timeout(@config[:timeout]) do
+            line = @socket.gets(@config[:eol])
+          end
+          raise "Socket Closed" unless line
           parse line.chomp
         end
+      rescue Timeout::Error => e
+        raise PingTimeout
       rescue Interrupt
         @queue.clear
         @queue << "QUIT :Circus-IRC out"
         sleep 1
+      ensure
+        @send_thread.exit
+        @queue.clear
+        @socket.close unless @socket.nil? || @socket.closed?
       end
-      
-      @send_thread.exit
-      @queue.clear
     end
     
     def send(message)

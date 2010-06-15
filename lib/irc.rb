@@ -20,6 +20,7 @@ module Circus
                     :username   =>  "circus",
                     :realname   =>  "Using ruby with Circus IRC",
                     :send_speed =>  0.5,
+                    :timeout    =>  15*60, #15 minutes
                     :eol        =>  "\r\n" }
       
       @config = @default.merge options
