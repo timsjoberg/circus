@@ -1,10 +1,12 @@
 require 'thread'
 require 'socket'
+require 'irc/parser'
 
 module Circus
   class Connection
     
-    def initialize(config)
+    def initialize(event_manager, config)
+      @parser = Parser.new(event_manager)
       @config = config
       @queue = Queue.new
     end
@@ -14,8 +16,14 @@ module Circus
       
       @send_thread = Thread.new { dispatch }
       
-      while line = @socket.gets(@config[:eol])
-        parse line.chomp
+      begin
+        while line = @socket.gets(@config[:eol])
+          parse line.chomp
+        end
+      rescue Interrupt
+        @queue.clear
+        @queue << "QUIT :Circus-IRC out"
+        sleep 1
       end
       
       @send_thread.exit
@@ -31,17 +39,14 @@ module Circus
     def dispatch
       loop do
         message = @queue.pop
-        puts "writing: #{message}"
         @socket.write "#{message}#{@config[:eol]}"
         sleep @config[:send_speed]
       end
     end
     
     def parse(line)
-      puts line
-      if line =~ /^PING\s+:(.*)$/
-        @queue << "PONG :#{$1}"
-      end
+      #puts line
+      @parser.parse line
     end
     
   end

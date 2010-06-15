@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__)) unless $:.include?(File.dirname(__FILE__)) ||
 require 'rubygems'
 require 'active_support'
 require 'irc/connection'
+require 'irc/event_manager'
 
 Dir[File.dirname(__FILE__) + "/irc/messages/*.rb"].each do |klass|
   require klass
@@ -22,14 +23,17 @@ module Circus
                     :eol        =>  "\r\n" }
       
       @config = @default.merge options
+      @event_manager = EventManager.new
+      
+      default_subscriptions
     end
     
     def connect
-      @connection ||= Connection.new @config
+      @connection ||= Connection.new @event_manager, @config
       
       message :PASS, @config[:password] if @config[:password]
       message :NICK, @config[:nick]
-      message :USER, "#{@config[:nick]} 0 * :#{@config[:realname]}"
+      message :USER, "#{@config[:username]} 0 * :#{@config[:realname]}"
       
       @connection.connect
     end
@@ -41,7 +45,15 @@ module Circus
       @connection.send message_class.new *arguments
     end
     
+    def subscribe(type, &block)
+      @event_manager.subscribe(type, &block)
+    end
+    
     protected
+    
+    def default_subscriptions
+      subscribe(:PING) { |msg| message(:PONG, msg) }
+    end
     
   end
 end
