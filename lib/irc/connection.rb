@@ -28,7 +28,7 @@ module Circus
           raise "Socket Closed" unless line
           parse line.chomp
         end
-      rescue Timeout::Error => e
+      rescue Timeout::Error
         raise PingTimeout
       rescue Interrupt
         @queue.clear
