@@ -2,8 +2,10 @@ require 'thread'
 require 'socket'
 require 'timeout'
 
-require 'irc/parser'
-require 'irc/errors'
+current_dir = File.dirname(__FILE__)
+
+require File.join(current_dir, 'parser')
+require File.join(current_dir, 'errors')
 
 module Circus
   class Connection

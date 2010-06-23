@@ -1,12 +1,11 @@
-$:.unshift(File.dirname(__FILE__)) unless $:.include?(File.dirname(__FILE__)) ||
-  $:.include?(File.expand_path(File.dirname(__FILE__)))
-
-require 'rubygems'
 require 'active_support'
-require 'irc/connection'
-require 'irc/event_manager'
 
-Dir[File.dirname(__FILE__) + "/irc/messages/*.rb"].each do |klass|
+current_dir = File.dirname(__FILE__)
+
+require File.join(current_dir, 'irc', 'connection')
+require File.join(current_dir, 'irc', 'event_manager')
+
+Dir[File.join(current_dir, 'irc', 'messages', '*.rb')].each do |klass|
   require klass
 end
 
@@ -32,28 +31,29 @@ module Circus
     def connect
       @connection ||= Connection.new @event_manager, @config
       
-      message :PASS, @config[:password] if @config[:password]
-      message :NICK, @config[:nick]
-      message :USER, "#{@config[:username]} 0 * :#{@config[:realname]}"
+      pass @config[:password] if @config[:password]
+      nick @config[:nick]
+      user "#{@config[:username]} 0 * :#{@config[:realname]}"
       
       @connection.connect
-    end
-    
-    def message(type, *arguments)
-      message_class = type.to_s.downcase.classify
-      message_class = "Circus::Messages::#{message_class}"
-      message_class = message_class.constantize
-      @connection.send message_class.new *arguments
     end
     
     def subscribe(type, &block)
       @event_manager.subscribe(type, &block)
     end
     
+    def method_missing(name, *args)
+      message_class = "Circus::Messages::#{name.to_s.downcase.classify}"
+      message_class = message_class.constantize
+      @connection.send message_class.new *args
+    rescue
+      super
+    end
+    
     protected
     
     def default_subscriptions
-      subscribe(:PING) { |msg| message(:PONG, msg) }
+      subscribe(:PING) { |msg| pong msg }
     end
     
   end

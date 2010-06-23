@@ -1,4 +1,6 @@
-require 'irc/commands'
+current_dir = File.dirname(__FILE__)
+
+require File.join(current_dir, 'commands')
 
 module Circus
   class Parser
