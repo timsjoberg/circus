@@ -20,7 +20,8 @@ module Circus
                     :realname   =>  "Using ruby with Circus IRC",
                     :send_speed =>  0.5,
                     :timeout    =>  15*60, #15 minutes
-                    :eol        =>  "\r\n" }
+                    :eol        =>  "\r\n",
+                    :debug      =>  false }
       
       @config = @default.merge options
       @event_manager = EventManager.new

@@ -27,13 +27,30 @@ module Circus
         elsif irc_message =~ /^\:(\S+) (\w+) (\S+)(?: \:?(.+))?$/
           message = $4 || ""
           symbol = Commands.get_command_symbol $2
+          message_type = $2
+          sender = $1
+          receiver = $3
           
-          #TODO: handle subclasses of privmsg e.g. ctcp and action. also subclass of notify ctcp_reply
+          if symbol == :PRIVMSG #possible subclass to ctcp or even more to action
+            if message =~ /^\001(.*)\001$/
+              symbol = :CTCP
+              message = $1
+              if message =~ /^ACTION (.*)$/
+                symbol = :ACTION
+                message = $1
+              end
+            end
+          elsif symbol == :NOTICE #possible subclass to ctcp_reply
+            if message =~ /^\001(.*)\001$/
+              symbol = :CTCPREPLY
+              message = $1
+            end
+          end
           
           if symbol
-            @event_manager.event(symbol, message, $1, $3)
+            @event_manager.event(symbol, message, sender, receiver)
           else
-            puts "UNKNOWN MESSAGE TYPE: #{$2}"
+            puts "UNKNOWN MESSAGE TYPE: #{message_type}"
           end
         else
           puts "UNPARSED: #{irc_message}"

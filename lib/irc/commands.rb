@@ -3,7 +3,7 @@ module Circus
     class << self
     
       COMMAND_MAP = {
-        # --- Text based ----------------------------------------
+        # --- Text based ---------------------------------------
         "error"   =>  :ERROR,
         "invite"  =>  :INVITE,
         "join"    =>  :JOIN,
@@ -16,7 +16,12 @@ module Circus
         "ping"    =>  :PING,
         "privmsg" =>  :PRIVMSG,
         "quit"    =>  :QUIT,
-
+        
+        
+        # --- Some useful subclassy things ---------------------
+        "ctcp"        =>  :CTCP,
+        "ctcp_reply"  =>  :CTCPREPLY,
+        "action"      =>  :ACTION,
 
 
         # --- 0** Codes ----------------------------------------
@@ -25,7 +30,6 @@ module Circus
         "003" => :CREATED,
         "004" => :MYINFO,
         "005" => :ISUPPORT,
-
 
 
         # --- 2** Codes ----------------------------------------
@@ -79,7 +83,6 @@ module Circus
         "265" => :LOCALUSERS,
         "266" => :GLOBALUSERS,
         "290" => :IDENTIFY,
-
 
 
         # --- 3** Codes ----------------------------------------
@@ -146,7 +149,6 @@ module Circus
         "396" => :HOSTHIDDEN, # undernet [ircu]: when hiding host is activated
 
 
-
         # --- 4** Codes ----------------------------------------
         "401" => :NOSUCHNICK,
         "402" => :NOSUCHSERVER,
@@ -203,12 +205,10 @@ module Circus
         "492" => :NOSERVICEHOST,
 
 
-
         # --- 5** Codes ----------------------------------------
         "501" => :UMODEUNKNOWNFLAG,
         "502" => :USERSDONTMATCH,
         "505" => :NOPRIVMSG,
-        
         
         
         # --- 9** Codes ----------------------------------------

@@ -52,13 +52,14 @@ module Circus
     def dispatch
       loop do
         message = @queue.pop
+        puts "sending: \"#{message}\"" if @config[:debug]
         @socket.write "#{message}#{@config[:eol]}"
         sleep @config[:send_speed]
       end
     end
     
     def parse(line)
-      #puts line
+      puts line if @config[:debug]
       @parser.parse line
     end
     
