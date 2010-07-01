@@ -6,6 +6,74 @@ An event driven IRC gem without a DSL or any EOF magick
  
 Tim Sjoberg (bedlamp AT gmail.com)
 
+== Quick How-to
+
+Install the gem
+  gem install circus
+
+How to connect
+  require 'circus'
+  
+  irc = Circus::IRC.new
+  irc.connect
+
+IRC#connect is a blocking call. It will only return when you're disconnected
+
+IRC#new takes a bunch of config parameters in the form of a hash, their names should be self explanatory
+  :server
+  :port
+  :nick
+  :username
+  :realname
+  :sendspeed #length of time between messages. this is for flood protection. default is 0.5 seconds
+  :timeout #If this amount of time, in seconds, is reached, circus considers itself disconnected
+  :eol #the line delimiter. you should hopefully never need to change this
+  :debug #if this is set to true, circus will output everything it does in stdout
+  :password #this is the password for the irc server if there is one. default is unset
+
+For example
+  irc = Circus::IRC.new :server => "irc.freenode.org", :nick => "Circus-IRC"
+
+To send stuff, you have a bunch of methods at your disposal. Each given with example parameters
+  irc.action "#circus", "jumps up and down" #does a ctcp ACTION, or /me in your irc client
+  irc.ctcp "user", "VERSION" #does a normal ctcp and puts in the \001s for you
+  irc.ctcp_reply "user", "VERSION Ruby using Circus-IRC 0.0.0"
+  irc.join "#circus"
+  irc.kick "#circus", "user", "no noobs allowed" #third parameter can be left out
+  irc.mode "#circus", "+o", "awesome_user" #third parameter optional. For example
+  irc.mode "Circus-IRC", "+B"
+  irc.nick "Circus-IRC"
+  irc.notice "user", "message"
+  irc.part "#circus"
+  irc.pass "password" #you shouldn't need to use this. use the password config value
+  irc.pong "value" #you also never need to use this. this is already handled
+  irc.privmsg "#circus", "Hello"
+  irc.quit "reason"
+  irc.raw "DCCALLOW +user" #for all those pesky additions
+  irc.topic "#circus", "New topic for channel #circus"
+  irc.user "user 0 * realname" #again, you shouldn't need this. use the config values
+
+As previously mentioned, it is event driven. Before calling connect, you can subscribe to any number of events, or multiple times to the same event. For a full list look in lib/irc/commands.rb. You can pass subscribe the string or the symbol version, for example
+  irc.subscribe(:ENDOFMOTD) do
+    irc.join "#circus"
+  end
+
+or
+  irc.subscribe("376") do
+    irc.join "#circus"
+  end
+
+You are going to need to know how many arguments a block is expecting if you are going to use them. Unfortunately the only way to this is to know the irc protocol, or trial and error. As an example, to create an echo bot (in channels only):
+  irc.subscribe(:PRIVMSG) do |message, sender, receiver|
+    if receiver =~ /^#/
+      irc.privmsg receiver, message
+    end
+  end
+
+==Disclaimer
+
+This gem is not designed to make it really easy to write irc bots, its designed to make it really easy to build a framework to create irc bots. This gem has been tested working in ruby 1.9
+
 == License
 
 This software is distributed under the BEER-WARE license. See LICENSE for details.
