@@ -1,0 +1,11 @@
+= circus
+
+An event driven IRC gem without a DSL or any EOF magick
+
+== Author
+ 
+Tim Sjoberg (bedlamp AT gmail.com)
+
+== License
+
+This software is distributed under the BEER-WARE license. See LICENSE for details.
