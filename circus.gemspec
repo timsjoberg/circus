@@ -14,13 +14,17 @@ Gem::Specification.new do |s|
   s.email = %q{bedlamp@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.md",
      "README.rdoc"
   ]
   s.files = [
-    ".gitignore",
-     "README.md",
+    ".document",
+     ".gitignore",
+     "LICENSE",
+     "README.rdoc",
+     "Rakefile",
      "VERSION",
+     "circus.gemspec",
+     "lib/circus.rb",
      "lib/irc.rb",
      "lib/irc/commands.rb",
      "lib/irc/connection.rb",
@@ -42,7 +46,10 @@ Gem::Specification.new do |s|
      "lib/irc/messages/raw.rb",
      "lib/irc/messages/topic.rb",
      "lib/irc/messages/user.rb",
-     "lib/irc/parser.rb"
+     "lib/irc/parser.rb",
+     "spec/circus_spec.rb",
+     "spec/spec.opts",
+     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/timsjoberg/circus}
   s.rdoc_options = ["--charset=UTF-8"]
