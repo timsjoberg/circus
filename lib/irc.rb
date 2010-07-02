@@ -13,7 +13,7 @@ module Circus
   class IRC
     
     def initialize(options = {})
-      @default  = { :server     =>  "za.shadowfire.org",
+      @default  = { :server     =>  "irc.freenode.net",
                     :port       =>  6667,
                     :nick       =>  "Circus-IRC",
                     :username   =>  "circus",
@@ -41,6 +41,12 @@ module Circus
     
     def subscribe(type, &block)
       @event_manager.subscribe(type, &block)
+    end
+    
+    %w(server port nick username realname send_speed timeout eol debug password).each do |config_value|
+      define_method("#{config_value}=".to_sym) do |new_value|
+        @config[config_value.to_sym] = new_value
+      end
     end
     
     def method_missing(name, *args)

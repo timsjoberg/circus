@@ -34,6 +34,11 @@ IRC#new takes a bunch of config parameters in the form of a hash, their names sh
 For example
   irc = Circus::IRC.new :server => "irc.freenode.org", :nick => "Circus-IRC"
 
+Alternatively, you can set the values after instantiation by calling #config_value=, for example
+  irc = Circus::IRC.new
+  irc.nick = "NewNick"
+  irc.server = "another.server.com"
+
 To send stuff, you have a bunch of methods at your disposal. Each given with example parameters
   irc.action "#circus", "jumps up and down" #does a ctcp ACTION, or /me in your irc client
   irc.ctcp "user", "VERSION" #does a normal ctcp and puts in the \001s for you
