@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{circus}
-  s.version = "0.0.0"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tim Sjoberg"]
-  s.date = %q{2010-07-01}
+  s.date = %q{2010-07-02}
   s.description = %q{A relatively simple event driven irc gem without a DSL or any EOF magick}
   s.email = %q{bedlamp@gmail.com}
   s.extra_rdoc_files = [
@@ -48,6 +48,7 @@ Gem::Specification.new do |s|
      "lib/irc/messages/user.rb",
      "lib/irc/parser.rb",
      "spec/circus_spec.rb",
+     "spec/irc_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
   ]
@@ -57,7 +58,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{A relatively simple event driven irc gem}
   s.test_files = [
-    "spec/circus_spec.rb",
+    "spec/irc_spec.rb",
+     "spec/circus_spec.rb",
      "spec/spec_helper.rb"
   ]
 
