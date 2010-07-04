@@ -1,4 +1,4 @@
-require 'active_support'
+require 'active_support/inflector'
 
 current_dir = File.dirname(__FILE__)
 
