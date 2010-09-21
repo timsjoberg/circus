@@ -43,17 +43,22 @@ module Circus
     end
     
     def event(symbol, message, sender = nil, receiver = nil)
+      events = []
+      
       @mutex.synchronize do
         if @subscriptions[symbol]
-          @subscriptions[symbol].each do |event_id|
-            if sender.nil? && receiver.nil?
-              @block_hash[event_id].call(message)
-            elsif receiver.nil?
-              @block_hash[event_id].call(message, sender)
-            else
-              @block_hash[event_id].call(message, sender, receiver)
-            end
-          end
+          ids = @subscriptions[symbol]
+          ids.each { |id| events << @block_hash[id] }
+        end
+      end
+      
+      events.each do |event|
+        if sender.nil? && receiver.nil?
+          event.call(message)
+        elsif receiver.nil?
+          event.call(message, sender)
+        else
+          event.call(message, sender, receiver)
         end
       end
     end

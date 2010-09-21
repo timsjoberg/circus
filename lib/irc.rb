@@ -43,6 +43,10 @@ module Circus
       @event_manager.subscribe(type, &block)
     end
     
+    def unsubscribe(event_id)
+      @event_manager.unsubscribe(event_id)
+    end
+    
     %w(server port nick username realname send_speed timeout eol debug password).each do |config_value|
       define_method("#{config_value}=".to_sym) do |new_value|
         @config[config_value.to_sym] = new_value
